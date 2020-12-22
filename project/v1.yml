@@ -1,0 +1,198 @@
+openapi: 3.0.0
+info:
+  title: Pokedex API
+  version: '1'
+
+servers:
+  - url: /api
+
+paths:
+
+  /pokemons:
+    get:
+      operationId: project.api.list_pokemons
+      parameters:
+      - name: type
+        description: type
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Get Pokemons
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pokemon'
+        '404':
+          description: Pokemons not found
+          content:
+            application/json: {}
+
+    post:
+      operationId: project.api.add_pokemon
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BasicForm'
+
+      responses:
+        '201':
+          description: Created
+
+  /pokemons/{pokemon_id}:
+    get:
+      operationId: project.api.get_pokemon
+      parameters:
+      - name: pokemon_id
+        description: pokemon_id
+        in: path
+        schema:
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: Get Pokemon
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pokemon'
+        '404':
+          description: Pokemons not found
+          content:
+            application/json: {}
+
+    put:
+      operationId: project.api.update_pokemon
+      parameters:
+      - name: pokemon_id
+        description: pokemon_id
+        in: path
+        schema:
+          type: integer
+        required: true
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BasicForm'
+      responses:
+        '200':
+          description: Updated
+
+    delete:
+      operationId: project.api.delete_pokemon
+      parameters:
+      - name: pokemon_id
+        description: pokemon_id
+        in: path
+        schema:
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: Deleted
+
+  /pokemons/{pokemon_id}/evolutions/{evolution_id}:
+    delete:
+      operationId: project.api.delete_evolution
+      parameters:
+      - name: pokemon_id
+        description: pokemon_id
+        in: path
+        schema:
+          type: integer
+        required: true
+      - name: evolution_id
+        description: evolution identifier
+        in: path
+        schema:
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: Delete Evolution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pokemon'
+
+  /pokemons/{pokemon_id}/evolutions:
+    put:
+      operationId: project.api.add_evolution
+      parameters:
+      - name: pokemon_id
+        description: Pokemon ID
+        in: path
+        schema:
+          type: integer
+        required: true
+      - name: evolution_id
+        description: Evolution ID
+        in: query
+        schema:
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: Add Evolution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pokemon'
+
+components:
+
+  schemas:
+
+    BasicForm:
+      type: object
+      properties:
+        number:
+          type: string
+        name:
+          type: string
+        types:
+          type: array
+          items:
+            type: string
+
+    Basic:
+      type: object
+      properties:
+        number:
+          type: string
+        name:
+          type: string
+        types:
+          $ref: '#/components/schemas/Types'
+
+    Pokemon:
+      allOf:
+        - $ref: '#/components/schemas/Basic'
+        - type: object
+          properties:
+            evolution:
+              $ref: '#/components/schemas/Evolutions'
+
+    Type:
+      type: object
+      properties:
+        name:
+          type: string
+
+    Types:
+      type: array
+      items:
+        $ref: '#/components/schemas/Type'
+
+    Evolutions:
+      type: array
+      items:
+        $ref: '#/components/schemas/Basic'
+
+
+# vi:et:ts=2:sw=2

@@ -1,0 +1,9 @@
+---
+mysql:
+  host: db
+  username: app
+  password: secret
+  database: app_db
+
+
+# vi:et:ft=yaml:ts=2:sw=2:cc=80
